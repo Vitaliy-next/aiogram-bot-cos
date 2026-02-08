@@ -35,21 +35,13 @@ async def shop_online(callback: CallbackQuery):
     
     await callback.message.edit_text(
         text,
-        reply_markup=shop_menu()   # 👈 добавили клавиатуру
+        reply_markup=brand_back_menu() # этот хендлер работает
+        
     )
 
     #await callback.message.edit_text(text)
     await callback.answer()
 
-
-
-# @router.callback_query(lambda c: c.data == "shop")
-# async def shop_handler(callback: CallbackQuery):
-#     await callback.message.edit_text(
-#         "🛍 Вибачаємося, ця функція в розробці 😉:\n",
-#         reply_markup=shop_menu()  # кнопка "назад"
-#     )
-#     await callback.answer()
 
 
 # ===== КНОПКА "Назад к брендам" =====

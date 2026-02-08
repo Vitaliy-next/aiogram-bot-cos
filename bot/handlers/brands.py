@@ -1,4 +1,6 @@
 from aiogram import Router
+from aiogram import F
+
 from aiogram.types import CallbackQuery
 from bot.keyboards.brands_detail import brand_back_menu
 from bot.keyboards.show_video import podii_menu
@@ -14,6 +16,7 @@ from bot.keyboards.prihod_video import prihod_menu # это подключени
 from bot.keyboards.changeprise_video import changeprise_menu # это подключение клавиатуры изменение цен видео
 
 
+from bot.settings import get_setting
 
 
 #from bot.keyboards.reply_shop import shop_reply_menu
@@ -33,16 +36,71 @@ from bot.models import NewproductBlock
 
 router = Router()
 
-
-# ===== КНОПКА "BRANDS" =====
 @router.callback_query(lambda c: c.data == "brands")
 async def brands_handler(callback: CallbackQuery):
     print("🔥 CALLBACK brands triggered")
+
     await callback.message.edit_text(
-        text="🧴 Друже! про новинки, акції та ін. можеш дізнатися нижче, але я буду ,інколи "
-        "писати тобі про головне особисто 🔥",
-        reply_markup=brands_menu()
+
+        text="🧴 Моя леді, тут ви знайдете всі новинки, акції та приємні пропозиції ✨\n\n"
+                "А про найважливіше я іноді писатиму вам особисто — з турботою та теплом 🤍",
+
+        #text="🧴 Леді! про новинки, акції та ін. можеш дізнатися нижче, але я буду ,інколи "
+             #"писати тобі про головне особисто 🔥",
+        reply_markup=await brands_menu()   # ✅ ВАЖНО
     )
+
+    await callback.answer()
+
+
+@router.callback_query(F.data & F.data.startswith("brand:"))
+async def brand_handler(callback: CallbackQuery):
+    brand_id = callback.data.split(":", 1)[1]
+
+    text = await get_setting(
+        f"{brand_id}_reply",
+        "Немає інформації"
+    )
+
+    await callback.message.edit_text(
+        text=text,
+        reply_markup=brand_back_menu()  # ✅ кнопка «Назад»
+    )
+
+    await callback.answer()
+
+
+# @router.callback_query(F.data & F.data.startswith("brand:"))
+# async def brand_handler(callback: CallbackQuery):
+#     brand_id = callback.data.split(":", 1)[1]
+
+#     text = await get_setting(f"{brand_id}_reply", "Немає інформації")
+#     await callback.message.edit_text(text)
+         
+        
+#     await callback.answer()
+
+# @router.callback_query(F.data.startswith("brand:"))
+# async def brand_handler(callback: CallbackQuery):
+#     brand_id = callback.data.split(":", 1)[1]
+
+#     text = await get_setting(f"{brand_id}_reply", "Немає інформації")
+#     await callback.message.edit_text(text)
+
+
+
+
+
+
+# # ===== КНОПКА "BRANDS" =====
+# @router.callback_query(lambda c: c.data == "brands")
+# async def brands_handler(callback: CallbackQuery):
+#     print("🔥 CALLBACK brands triggered")
+#     await callback.message.edit_text(
+#         text="🧴 Друже! про новинки, акції та ін. можеш дізнатися нижче, але я буду ,інколи "
+#         "писати тобі про головне особисто 🔥",
+#         reply_markup=brands_menu()
+#     )
 
      
 

@@ -8,7 +8,7 @@ from bot.models import Product
 from bot.keyboards.order_builder import products_keyboard
 
 from bot.keyboards.shop_online import shop_menu
-
+from bot.keyboards.brands_detail import brand_back_menu
 
 router = Router()
 
@@ -31,8 +31,10 @@ async def order_start(message: Message):
 
 # 👇 ДОБАВЛЯЕМ МЕНЮ
     await message.answer(
-        "Меню магазину:",
-        reply_markup=shop_menu()
+        "Меню магазину:",       
+        reply_markup=brand_back_menu()
+
+
     )
 
 
@@ -41,8 +43,3 @@ async def order_start(message: Message):
 
 
 
-
-    # await message.answer(
-    #     "🛒 Оберіть товар:",
-    #     reply_markup=products_keyboard(products)
-    # )

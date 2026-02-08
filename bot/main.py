@@ -44,6 +44,8 @@ from bot.handlers.cart_actionspay import router as actionspay_router
 from bot.handlers.order_contact import router as ordercontact_router
 
 
+from bot.handlers.admin_settings import router as settings_router
+
 
 async def on_startup():
     async with engine.begin() as conn:
@@ -86,6 +88,7 @@ async def main():
     #dp.include_router(actionspay_router)
     dp.include_router(actionspay_router)
     dp.include_router(ordercontact_router)
+    dp.include_router(settings_router)
    
 
     await dp.start_polling(bot)

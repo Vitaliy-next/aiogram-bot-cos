@@ -7,7 +7,7 @@ from sqlalchemy import text
 
 from bot.database import async_session
 from bot.handlers.admin_states import AdminLogin, AdminSQL, AdminMessage, GetPhone,InformState,StockState,PriseState,PodiiState,ProductState,NewproductState,CodeState
-from bot.config import ADMIN_PASSWORD,PASSWORD,INFORM_PASSWORD,STOCK_PASSWORD,PRISE_PASSWORD,PODII_PASSWORD,PRODUCT_PASSWORD,NEWPRODUCT_PASSWORD,CODE_PASSWORD
+from bot.config import ADMIN_PASSWORD,PASSWORD,INFORM_PASSWORD,STOCK_PASSWORD,PRISE_PASSWORD,PODII_PASSWORD,PRODUCT_PASSWORD,NEWPRODUCT_PASSWORD,CODE_PASSWORD,MANAGER_PASSWORD
 from bot.models import InfoBlock
 from bot.models import StockBlock
 from bot.models import PriseBlock
@@ -16,6 +16,20 @@ from bot.models import ProductBlock
 from bot.models import NewproductBlock
 
 from sqlalchemy import select
+
+
+
+
+from aiogram.filters import Command, CommandObject
+from bot.settings import set_setting
+
+
+
+
+
+
+
+
 
 router = Router()
 
@@ -223,6 +237,12 @@ authorized_users: set[int] = set()
 async def password_handler(message: Message):
     authorized_users.add(message.from_user.id)
     await message.answer("✅ Пароль вірний. Можеш надсилати фото або відео.")
+
+# # этот блок дает запоминание пароля startswith
+# @router.message(F.text.startswith(PASSWORD))
+# async def password_handler(message: Message):
+#     authorized_users.add(message.from_user.id)
+#     await message.answer("✅ Пароль вірний. Можеш надсилати фото або відео.")
 
 
 @router.message(F.video | F.photo)
@@ -613,6 +633,53 @@ async def code_execute_sql(message: Message, state: FSMContext):
         )
 
     await state.clear()
+
+
+
+# из-за этого кода не работает изменение в кнопках
+
+
+# from aiogram import Router
+# from aiogram.types import Message
+# from aiogram.filters import Command, CommandObject
+# from bot.settings import set_setting
+
+# router = Router()
+
+
+
+
+#MANAGER_PASSWORD = ""
+
+
+@router.message(Command("contmen"))
+async def add_contact_manager(message: Message, command: CommandObject):
+    """
+    /contmen пароль ключ url
+    """
+    if not command.args:
+        await message.answer(
+            "Формат:\n"
+            "/contmen пароль cont1_tg https://t.me/username"
+        )
+        return
+
+    password, key, url = command.args.split(maxsplit=2)
+
+    if password != MANAGER_PASSWORD:
+        await message.answer("❌ Невірний пароль")
+        return
+
+    if not key.startswith("cont") or not key.endswith("_tg"):
+        await message.answer("❗ Ключ повинен бути типу cont1_tg")
+        return
+
+    if not url.startswith("https://t.me/"):
+        await message.answer("❗ Це не Telegram URL")
+        return
+
+    await set_setting(key, url)
+    await message.answer(f"✅ Менеджер `{key}` доданий")
 
 
 
